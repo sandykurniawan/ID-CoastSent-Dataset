@@ -85,6 +85,10 @@ data/
 
 The dataset consists of publicly posted reviews analysed retrospectively. No identifying information about the reviewers was collected, and reviewer names are not included. Some review texts may nevertheless contain names or other personal details that the reviewers wrote themselves; please do not attempt to identify individuals from the data.
 
+## License
+
+The annotations, aggregated labels, data splits and documentation in this repository are released under the [Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/). The review texts were written by Google Maps users and remain subject to their authors' rights and to Google's terms of service; they are provided for non-commercial research purposes only.
+
 ## Citation
 
 If you use this dataset, please cite the accompanying article (citation details will be updated after publication).
