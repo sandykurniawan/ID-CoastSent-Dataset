@@ -1,62 +1,90 @@
-# ID-CoastSent Dataset: Indonesian Coastal Tourism Review Dataset
+# ID-CoastSent: Indonesian Coastal-Tourism Reviews with Three Annotator Labels
 
-## Overview
-This repository provides **ID-CoastSent**, a rigorously annotated sentiment analysis dataset composed of Indonesian coastal tourism reviews. The dataset contains **21,779 clean reviews**, categorized into three sentiment classes: **Positive**, **Negative**, and **Neutral**. 
+ID-CoastSent contains **21,779 Indonesian Google Maps reviews of coastal-tourism destinations**, each labelled as **Positive**, **Negative** or **Neutral** by three annotators. The individual annotator labels are released alongside the aggregated labels, so the dataset can be used both for standard sentiment classification and for studies of annotator agreement and disagreement.
 
-To support advanced Natural Language Processing (NLP) research—such as model robustness and uncertainty handling—every review was independently evaluated by three human annotators. The dataset is provided in two distinct training variations (High-Confidence/All Agree vs. Real-World/Majority Vote) to facilitate comparative AI studies.
+The dataset accompanies the following article (under review):
 
-## UN Sustainable Development Goal 9 (SDG 9) Alignment
-This dataset was developed to directly support **UN SDG 9: Industry, Innovation and Infrastructure**. 
+> Kurniawan, S., Tantyoko, H., Khadijah, Wibawa, H.A. *Annotator Agreement or Training-Data Quantity? A Controlled Comparison of Unanimous and Majority-Vote Training Data for Indonesian Coastal-Tourism Sentiment Classification.* Submitted to *Discover Artificial Intelligence*.
 
-Coastal tourism is a vital economic driver in Indonesia, but local governments and businesses often lack automated, data-driven feedback loops to monitor public sentiment regarding facilities, safety, and accessibility. By providing high-quality, domain-specific infrastructure for AI researchers, this dataset accelerates the development of automated NLP tools. These tools allow policymakers to rapidly process unstructured public feedback, leading to more resilient tourism infrastructure, inclusive industrialization, and targeted local innovations.
+## Data collection and annotation
 
-## Annotation Quality & Inter-Annotator Agreement (IAA)
-To ensure the reliability of the dataset, inter-annotator agreement was measured across all 21,779 valid reviews prior to partitioning. 
+- **Source:** publicly posted Google Maps reviews of coastal-tourism destinations in several Indonesian regions. After removing empty, duplicate, non-Indonesian and very short reviews (< 20 characters), 253,422 reviews remained.
+- **Sampling:** 4,386 reviews were drawn from each star-rating level (1–5), yielding 21,930 reviews for annotation. The rating served only as a stratification variable, because the textual sentiment of a review is unknown before annotation. As a consequence, the class distribution of this dataset does **not** reflect the natural distribution of sentiment in Google Maps reviews.
+- **Annotators:** three undergraduate Informatics students, all native speakers of Indonesian. They labelled the reviews independently, each in a separate spreadsheet, and did not see one another's labels.
+- **What annotators saw:** only the review identifier and the review text. Star rating, destination, province and date were hidden.
+- **Instructions:** brief oral instructions to judge whether each review is positive, negative or neutral. There was no written guideline, no calibration round and no adjudication. The treatment of mixed reviews was left to each annotator.
+- **Exclusions:** 151 reviews reported as non-Indonesian or uninterpretable were removed, leaving 21,779 reviews.
 
-*   **Fleiss' Kappa Score:** `0.7096`
-*   **Interpretation:** Substantial agreement
+## Agreement
 
-An analysis of individual annotator distributions reveals consistent overall behaviors, with slight natural variations in how ambiguous/neutral reviews were handled. Providing both unanimous and majority-vote data splits allows researchers to explicitly study this human subjectivity.
+Fleiss' κ over all 21,779 reviews is **0.7096**, which corresponds to substantial agreement. Agreement differs strongly between classes, however:
+
+| Agreement pattern | Reviews | % |
+| :--- | ---: | ---: |
+| 3-0 (all three labels identical) | 15,827 | 72.67 |
+| 2-1 (two-to-one majority) | 5,708 | 26.21 |
+| 1-1-1 (three different labels) | 244 | 1.12 |
+
+| Majority label | Reviews | 3-0 | 2-1 | Category-specific κ |
+| :--- | ---: | ---: | ---: | ---: |
+| Negative | 8,691 | 82.3% | 17.7% | 0.791 |
+| Positive | 8,479 | 83.7% | 16.3% | 0.792 |
+| Neutral | 4,365 | 36.0% | 64.0% | 0.465 |
+
+Of the 5,708 two-to-one cases, 94.0% involve the neutral label; only 6.0% are conflicts between positive and negative. Pairwise Cohen's κ between annotators ranges from 0.66 to 0.77. The annotators' neutral rates also differ considerably:
 
 | Annotator | Positive | Negative | Neutral |
-| :--- | :--- | :--- | :--- |
-| **Annotator 1** | 8,339 (38.3%) | 8,679 (39.9%) | 4,761 (21.9%) |
-| **Annotator 2** | 7,878 (36.2%) | 8,129 (37.3%) | 5,772 (26.5%) |
-| **Annotator 3** | 9,719 (44.6%) | 9,476 (43.5%) | 2,584 (11.9%) |
+| :--- | ---: | ---: | ---: |
+| Annotator 1 | 8,339 (38.3%) | 8,679 (39.9%) | 4,761 (21.9%) |
+| Annotator 2 | 7,878 (36.2%) | 8,129 (37.3%) | 5,772 (26.5%) |
+| Annotator 3 | 9,719 (44.6%) | 9,476 (43.5%) | 2,584 (11.9%) |
 
-## Repository Structure
+Disagreement in this dataset should therefore not be read as annotation error. Because no shared definition of the neutral category was given, a two-to-one label combines genuine textual ambiguity with differences in the annotators' thresholds for neutrality.
+
+## Files
 
 ```text
-📁 dataset-root/
-│
-├── 📂 data/
-│   ├── train_all_agree.csv        # High-confidence training set (unanimous agreement)
-│   ├── train_majority_vote.csv    # Real-world training set (2/3 annotator agreement)
-│   ├── test_set.csv               # Fixed testing set (300 rows, strictly balanced)
-│   └── full_dataset_clean.csv     # Unsplit dataset with all original metadata
-│
-└── README.md
+data/
+├── full_dataset_clean.csv     # all 21,779 reviews with the three individual labels
+├── train_all_agree.csv        # Track A: unanimous (3-0) reviews, test set excluded
+├── train_majority_vote.csv    # Track B: 3-0 and 2-1 reviews with majority label, test set excluded
+└── test_set.csv               # fixed test set: 300 unanimous reviews, 100 per class
 ```
 
-## Data Splits & Methodological Design
+| File | Rows | Negative | Neutral | Positive | Content |
+| :--- | ---: | ---: | ---: | ---: | :--- |
+| `train_all_agree.csv` | 15,527 | 7,054 | 1,472 | 7,001 | 3-0 reviews only |
+| `train_majority_vote.csv` | 21,235 | 8,591 | 4,265 | 8,379 | 3-0 and 2-1 reviews (26.9% are 2-1) |
+| `test_set.csv` | 300 | 100 | 100 | 100 | 3-0 reviews only |
+| `full_dataset_clean.csv` | 21,779 | – | – | – | all reviews, including the 244 1-1-1 reviews |
 
-To prevent data leakage and provide a standardized benchmark, a strictly balanced testing set was extracted *before* the training data was partitioned. 
+**Accounting:** 21,779 = 300 (test, 3-0) + 15,527 (3-0) + 5,708 (2-1) + 244 (1-1-1).
 
-1. **`test_set.csv` (300 rows):** The gold-standard evaluation set. Contains exactly 100 positive, 100 negative, and 100 neutral reviews sampled strictly from the unanimous agreement pool.
-2. **`train_all_agree.csv` (15,527 rows):** The high-confidence training set. Contains only reviews where all three annotators were in absolute agreement. 
-3. **`train_majority_vote.csv` (21,235 rows):** The broader training set containing all valid reviews where at least two annotators agreed on the sentiment, representing a noisier, real-world distribution. *Note: To strictly prevent data leakage, the 300 reviews from the evaluation set have been completely excluded from this file.*
-4. **`full_dataset_clean.csv` (21,779 rows):** The complete dataset prior to splitting, providing individual annotator votes (`Ann 1`, `Ann 2`, `Ann 3`) for researchers interested in custom cross-validation, label smoothing, or annotator disagreement studies. *This file includes the 244 highly divergent reviews (3-way ties) that were excluded from the majority vote training set.*
+**Construction notes:**
+- The test set was sampled after annotation and before the training files were built, by stratified random sampling from the unanimous reviews (100 per class, `random_state = 42`). It is disjoint from both training files.
+- `train_all_agree.csv` is a subset of `train_majority_vote.csv`. A direct comparison of the two therefore confounds label agreement with training-set size and class distribution. To compare them at equal size and class distribution, draw subsets of `train_majority_vote.csv` with the per-class counts of `train_all_agree.csv` (7,054 / 1,472 / 7,001), as done in the accompanying article.
+- Because the test set contains only unanimous labels, it measures agreement with clear-cut judgements, not performance on contested reviews.
 
-## Data Dictionary
-All training and testing CSVs have been standardized to use `sentiment` as the target label column for seamless machine learning pipeline integration.
+## Data dictionary
 
-| Column | Type | Description |
+| Column | Files | Description |
 | :--- | :--- | :--- |
-| `number_id` | Integer | Unique identifier for the review. |
-| `name` | String | The name of the coastal tourism destination/attraction. |
-| `province` | String | The Indonesian province where the coastal destination is located. |
-| `published_at_date` | Date | The original publication date of the review. |
-| `review_text` | String | The raw text of the review in Indonesian. |
-| `rating` | Integer | The original numerical rating (e.g., 1-5 stars) provided by the user. |
-| `Ann 1`, `Ann 2`, `Ann 3` | String | Individual sentiment labels assigned by the three human annotators. |
-| `sentiment` | String | The final aggregated label (`positive`, `negative`, `neutral`) used for model training/testing. |
+| `number_id` | all | Unique review identifier; links reviews across files. |
+| `name` | all | Name of the coastal-tourism destination. |
+| `province` | all | Indonesian province of the destination. |
+| `published_at_date` | all | Publication date of the review. |
+| `review_text` | all | Review text as posted. |
+| `rating` | all | Google Maps star rating (1–5). Not shown to annotators. |
+| `clean_review` | `full_dataset_clean.csv` | Review text with line breaks and repeated whitespace collapsed; this is the text the annotators labelled. |
+| `Ann 1`, `Ann 2`, `Ann 3` | `full_dataset_clean.csv` | Labels assigned by each annotator (`Positive`, `Negative`, `Neutral`). |
+| `All Agree` | `full_dataset_clean.csv` | The label if all three annotators agree; empty otherwise. |
+| `Major Vote` | `full_dataset_clean.csv` | The majority label if at least two annotators agree; empty for the 244 1-1-1 reviews. |
+| `sentiment` | training and test files | Aggregated label used for training and evaluation (`Positive`, `Negative`, `Neutral`). |
+
+## Ethics and privacy
+
+The dataset consists of publicly posted reviews analysed retrospectively. No identifying information about the reviewers was collected, and reviewer names are not included. Some review texts may nevertheless contain names or other personal details that the reviewers wrote themselves; please do not attempt to identify individuals from the data.
+
+## Citation
+
+If you use this dataset, please cite the accompanying article (citation details will be updated after publication).
